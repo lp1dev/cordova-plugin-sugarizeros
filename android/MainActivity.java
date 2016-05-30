@@ -17,7 +17,7 @@
        under the License.
  */
 
-package org.olpcfrance.sugarizer;
+package org.olpc_france.sugarizeros;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -42,7 +43,7 @@ public class MainActivity extends CordovaActivity
 {
     private Context mContext;
     private WindowManager windowManager;
-    private WindowManager.LayoutParams overAllLayoutParams, classicLayoutParams;
+    private WindowManager.LayoutParams overAllLayoutParams;
     private CustomViewGroup customViewGroup;
 
     @Override
@@ -50,7 +51,6 @@ public class MainActivity extends CordovaActivity
     {
         super.onCreate(savedInstanceState);
         mContext = this;
-
         //Hiding Notification Bar Hacks
         preventStatusBarExpansion(mContext);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -59,9 +59,8 @@ public class MainActivity extends CordovaActivity
         if (appView == null)
             customInit();
         this.keepRunning = preferences.getBoolean("KeepRunning", true);
-        //windowManager.addView(customViewGroup, layoutParams);
-        //setContentView(customViewGroup);
         appView.loadUrlIntoView(launchUrl, true);
+        setContentView(appView.getView());
     }
 
     public void customInit(){
@@ -76,23 +75,25 @@ public class MainActivity extends CordovaActivity
         if ("media".equals(volumePref.toLowerCase(Locale.ENGLISH))) {
             setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
+        appView.getView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 
-    public void initAppView(){
-        //appView.getView().setId(100);
+    public void initAppView() {
         appView.getView().setLayoutParams(new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
-        setContentView(appView.getView(), overAllLayoutParams);
-        //WindowManager.LayoutParams localLayoutParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        //windowManager.addView(customViewGroup, overAllLayoutParams);
         if (preferences.contains("BackgroundColor")) {
             int backgroundColor = preferences.getInteger("BackgroundColor", Color.BLACK);
-            // Background of activity:
             appView.getView().setBackgroundColor(backgroundColor);
         }
         appView.getView().requestFocusFromTouch();
+
     }
 
     @Override
@@ -116,18 +117,11 @@ public class MainActivity extends CordovaActivity
 
         Activity activity = (Activity)context;
         overAllLayoutParams = new WindowManager.LayoutParams();
-        classicLayoutParams = new WindowManager.LayoutParams();
         overAllLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        classicLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         overAllLayoutParams.gravity = Gravity.TOP;
-        overAllLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|
-
-               WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
-
-               WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
-
+        overAllLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         overAllLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        //http://stackoverflow.com/questions/1016896/get-screen-dimensions-in-pixels
+
         int resId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
         int result = 0;
         if (resId > 0) {
@@ -135,10 +129,9 @@ public class MainActivity extends CordovaActivity
         }
 
         overAllLayoutParams.height = result;
-
         overAllLayoutParams.format = PixelFormat.TRANSPARENT;
-
         customViewGroup = new CustomViewGroup(context);
+        windowManager.addView(customViewGroup, overAllLayoutParams);
     }
 
     public static class CustomViewGroup extends ViewGroup {
@@ -154,7 +147,6 @@ public class MainActivity extends CordovaActivity
         @Override
         public boolean onInterceptTouchEvent(MotionEvent ev) {
             Log.v("customViewGroup", "**********Intercepted");
-
             return false;
         }
     }

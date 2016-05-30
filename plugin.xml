@@ -24,7 +24,7 @@
     </config-file>
 
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:windowSoftInputMode="adjustResize" android:name="org.sugar_labs.sugarizeros.MainActivity">
+      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:windowSoftInputMode="adjustResize" android:name="org.sugar_labs.sugarizeros.MainActivity">
       </activity>
     </config-file>
 
