@@ -19,16 +19,22 @@
   <platform name="android">
     <config-file target="res/xml/config.xml" parent="/*">
       <feature name="SugarizerOSPlugin">
-	<param name="android-package" value="org.sugar_labs.sugarizeros" />
+	<param name="android-package" value="com.sugar_labs.sugarizeros"/>
       </feature>
     </config-file>
-
-    <config-file target="AndroidManifest.xml" parent="/manifest/application">
-      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:windowSoftInputMode="adjustResize" android:name="org.sugar_labs.sugarizeros.MainActivity">
-      </activity>
+    
+    <config-file target="AndroidManifest.xml" parent="/manifest">
+      <application android:hardwareAccelerated="true" android:icon="@drawable/icon" android:label="@string/app_name" android:supportsRtl="true">
+	<activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:label="@string/activity_name" android:launchMode="singleTop" android:name="MainActivity" android:screenOrientation="landscape" android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:windowSoftInputMode="adjustResize">
+	  <intent-filter android:label="@string/launcher_name">
+	    <action android:name="android.intent.action.MAIN" />
+	    <category android:name="android.intent.category.LAUNCHER" />
+	    <category android:name="android.intent.category.HOME" />
+	    <category android:name="android.intent.category.DEFAULT" />
+	  </intent-filter>
+	</activity>
+      </application>
     </config-file>
-
-    <source-file src="android/MainActivity.java" target-dir="src/sugarizeros/cordova/plugin/sugarizeros" />
+    <source-file src="android/MainActivity.java" target-dir="src"/>
   </platform>
-
 </plugin>
