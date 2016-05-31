@@ -24,11 +24,11 @@
     </config-file>
     
     <config-file target="AndroidManifest.xml" parent="/manifest/application">  
-      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:name="SugarizerOSActivity">
+      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:name="HomeActivity">
       </activity>
-      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:windowSoftInputMode="adjustResize" android:name="SugarizerOSActivity">
+      <activity android:label="Sugarizer OS" android:launchMode="singleTop" android:theme="@android:style/Theme.NoTitleBar.Fullscreen" android:keepScreenOn="true" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale" android:windowSoftInputMode="adjustResize" android:name="HomeActivity">
       </activity>
     </config-file>
-    <source-file src="android/SugarizerOSActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
+    <source-file src="android/HomeActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
