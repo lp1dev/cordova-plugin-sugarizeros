@@ -23,6 +23,6 @@
       </feature>
     </config-file>
 
-    <source-file src="android/MainActivity.java" target-dir="src"/>
+    <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
