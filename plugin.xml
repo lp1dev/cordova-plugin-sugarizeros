@@ -28,5 +28,6 @@
   
     
     <source-file src="android/HomeActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
+    <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
