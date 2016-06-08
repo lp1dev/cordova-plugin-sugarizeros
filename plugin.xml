@@ -13,7 +13,7 @@
   </engines>
 
   <js-module src="sugarizeros.js" name="sugarizerOsPlugin">
-    <clobbers target="window.sugarizeros" />
+    <clobbers target="window" />
   </js-module>
 
   <platform name="android">
