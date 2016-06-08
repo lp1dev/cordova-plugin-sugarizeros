@@ -39,7 +39,7 @@ import org.apache.cordova.*;
 import java.util.Locale;
 
 
-public class HomeActivity extends CordovaActivity
+public class MainActivity extends CordovaActivity
 {
     private Context mContext;
     private WindowManager windowManager;
