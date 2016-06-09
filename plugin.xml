@@ -43,6 +43,7 @@
       <feature name="SugarizerOSPlugin">
 	<param name="android-package" value="com.sugar_labs.sugarizeros"/>
       </feature>
+      <plugin name="Echo" value="org.apache.cordova.plugin.Echo" />
     </config-file>
     
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
