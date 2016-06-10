@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android"
 	id="cordova-plugin-sugarizeros" version="0.1">
-
   <name>Cordova Sugarizer OS Plugin</name>
   <author>Jeremie Amsellem</author>
   <description>
@@ -39,13 +38,13 @@
       </intent-filter>
     </config-file>
     
-    <config-file target="res/xml/config.xml" parent="/*">
+    <config-file target="config.xml" parent="/*">
       <feature name="SugarizerOSPlugin">
-	<param name="android-package" value="com.sugar_labs.sugarizeros"/>
+	<param name="android-package" value="org.olpcfrance.sugarizer.SugarizerOSPlugin"/>
       </feature>
-      <plugin name="Echo" value="org.apache.cordova.plugin.Echo" />
     </config-file>
     
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
+    <source-file src="android/SugarizerOSPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
