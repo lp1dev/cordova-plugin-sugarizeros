@@ -12,10 +12,9 @@ function onFailure(){
 }
 
 function init(){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "echo", ["I'm Alive"]);    
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", []);
     sugarizeros = true;
     console.log("SugarizerOS initialized");
 }
 
-//document.addEventListener('deviceready', init, false);
 init();
