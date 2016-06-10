@@ -20,4 +20,5 @@ var sugarizerOS = (
 	}
 	return self;
     }
-);
+)();
+
