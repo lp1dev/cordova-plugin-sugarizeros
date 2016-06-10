@@ -17,4 +17,5 @@ function init(){
     console.log("SugarizerOS initialized");
 }
 
-document.addEventListener('deviceready', init, false);
+//document.addEventListener('deviceready', init, false);
+init();
