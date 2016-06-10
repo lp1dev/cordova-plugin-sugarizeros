@@ -1,3 +1,4 @@
+var exec = require('cordova/exec');
 
 var sugarizeros;
 
@@ -11,9 +12,9 @@ function onFailure(){
 }
 
 function init(){
-//    alert("SugarizerOS Loaded");
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "echo", ["I'm Alive"]);    
     sugarizeros = true;
+    console.log("SugarizerOS initialized");
 }
 
-init();
+document.addEventListener('deviceready', init, false);
