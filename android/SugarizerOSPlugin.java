@@ -1,5 +1,7 @@
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.PluginResult;
+package org.olpcfrance.sugarizer;
+
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,15 +11,15 @@ import org.json.JSONObject;
  */
 
 public class SugarizerOSPlugin extends CordovaPlugin {
-        @Override
-	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-	    if (action.equals("echo")) {
-		String message = args.getString(0);
-		this.echo(message, callbackContext);
-		return true;
+            @Override
+	    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+		if (action.equals("echo")) {
+		    String message = args.getString(0);
+		    this.echo(message, callbackContext);
+		    return true;
+		}
+		return false;
 	    }
-	    return false;
-	}
 
     private void echo(String message, CallbackContext callbackContext) {
 	if (message != null && message.length() > 0) {
