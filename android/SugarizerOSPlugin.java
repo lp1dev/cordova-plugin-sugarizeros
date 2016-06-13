@@ -72,16 +72,21 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 
 	List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 	for (int i = 0;i < packages.size(); i++){
-	    JSONObject application = new JSONObject();
-	    try {
-		application.put("packageName", packages.get(i).packageName);
-		application.put("flags", packages.get(i).flags);
-		application.put("name", pm.getApplicationLabel(packages.get(i)));
-		application.put("icon", getIcon(packages.get(i).packageName));
-	    } catch (JSONException e) {
-		e.printStackTrace();
+	    ApplicationInfo app = packages.get(i);
+	    if((app.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 1) {
+	    } else if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
+	    } else {
+		JSONObject application = new JSONObject();
+		try {
+		    application.put("packageName", packages.get(i).packageName);
+		    application.put("flags", packages.get(i).flags);
+		    application.put("name", pm.getApplicationLabel(packages.get(i)));
+		    application.put("icon", getIcon(packages.get(i).packageName));
+		} catch (JSONException e) {
+		    e.printStackTrace();
+		}
+		output.put(application);
 	    }
-	    output.put(application);
 	}
 	callbackContext.success(output);
     }
@@ -95,17 +100,17 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
 	this.cordova.getActivity().startActivity( LaunchIntent );
     }
-                            @Override
-			    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-				if (action.equals("runActivity")){
-				    this.runActivity(callbackContext, args.getString(0));
+                                @Override
+				public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+				    if (action.equals("runActivity")){
+					this.runActivity(callbackContext, args.getString(0));
+				    }
+				    if (action.equals("apps")) {
+					this.getApps(callbackContext, args.getInt(0));
+				    }
+				    if (action.equals("echo")) {
+					callbackContext.success(args.getString(0));
+				    }
+				    return false;
 				}
-				if (action.equals("apps")) {
-				    this.getApps(callbackContext, args.getInt(0));
-				}
-				if (action.equals("echo")) {
-				    callbackContext.success(args.getString(0));
-				}
-				return false;
-			    }
 }

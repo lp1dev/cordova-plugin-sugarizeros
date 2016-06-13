@@ -1,3 +1,4 @@
+define([], function(){
     var sugarizerOS = {};
     var exec = require('cordova/exec');
     
@@ -52,3 +53,6 @@
     sugarizerOS.log = function(m){
 	console.log(m);
     }
+    
+    return sugarizerOS;
+});
