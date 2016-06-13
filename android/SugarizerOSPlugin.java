@@ -51,12 +51,13 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	return bitmap;
     }
 
-    private void getIcon(CallbackContext callbackContext, String packageName){
+    private String getIcon(String packageName){
 	try {
-	    callbackContext.success(bitmapToBase64(getBitmap(pm.getApplicationIcon(packageName))));
+	    return bitmapToBase64(getBitmap(pm.getApplicationIcon(packageName)));
 	} catch (PackageManager.NameNotFoundException e) {
-	    callbackContext.error(e.toString());
+	    e.printStackTrace();
 	}
+	return "";
     }
 
     private void getApps(CallbackContext callbackContext, int flags){
@@ -69,14 +70,10 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	    JSONObject application = new JSONObject();
 	    try {
 		application.put("packageName", packages.get(i).packageName);
-	    } catch (JSONException e) {
-		callbackContext.error(e.toString());
-		e.printStackTrace();
-	    }
-	    try {
 		application.put("flags", packages.get(i).flags);
+		application.put("name", pm.getApplicationLabel(packages.get(i)));
+		application.put("icon", getIcon(packages.get(i).packageName));
 	    } catch (JSONException e) {
-		callbackContext.error(e.toString());
 		e.printStackTrace();
 	    }
 	    output.put(application);
@@ -84,17 +81,14 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	callbackContext.success(output);
     }
 
-                @Override
-		public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-		    if (action.equals("icon")) {
-			this.getIcon(callbackContext, args.getString(0));
-		    }
-		    if (action.equals("apps")) {
-			this.getApps(callbackContext, 0);
-		    }
-		    if (action.equals("echo")){
-			callbackContext.success(args.getString(0));
-		    }
-		    return false;
-		}
+                        @Override
+			public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+			    if (action.equals("apps")) {
+				this.getApps(callbackContext, args.getInt(0));
+			    }
+			    if (action.equals("echo")){
+				callbackContext.success(args.getString(0));
+			    }
+			    return false;
+			}
 }
