@@ -1,6 +1,12 @@
 var sugarizerOS = {};
 var exec = require('cordova/exec');
 
+sugarizerOS.applicationsLoaded = false;
+
+sugarizerOS.setApplicationsLoaded = function(value){
+    sugarizerOS.applicationsLoaded = true;
+}
+
 sugarizerOS.init = function(){
     if (window){
 	window.sugarizerOS = sugarizerOS;
@@ -41,12 +47,20 @@ sugarizerOS.applicationsToActivities = function(applications){
 }
 
 sugarizerOS.initActivitiesPreferences = function(){
-    sugarizerOS.getAndroidApplications(function(applications){
-	var activities = preferences.getActivities();
-	activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
-	preferences.setActivities(activities);
+    if (!sugarizerOS.applicationsLoaded){
+	sugarizerOS.getAndroidApplications(function(applications){
+	    var activities = preferences.getActivities();
+	    for (i = 0; i < activities.length; i++)
+		if (activities[i].id == applications[0].packageName)
+		    sugarizerOS.setApplicationsLoaded(true);
+	    if (!sugarizerOS.applicationsLoaded){
+	    activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
+	    preferences.setActivities(activities);
+		sugarizerOS.setApplicationsLoaded(true);
+	    }
+	}
+					   , sugarizerOS.log, [0]);
     }
-				       , sugarizerOS.log, [0]);
 }
     
 sugarizerOS.log = function(m){
