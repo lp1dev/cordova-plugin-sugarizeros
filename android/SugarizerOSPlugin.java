@@ -1,5 +1,6 @@
 package org.olpcfrance.sugarizer;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -53,6 +54,10 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 
     private String getIcon(String packageName){
 	try {
+	    if (pm == null){
+		CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
+		pm = activity.getPackageManager();
+	    }
 	    return bitmapToBase64(getBitmap(pm.getApplicationIcon(packageName)));
 	} catch (PackageManager.NameNotFoundException e) {
 	    e.printStackTrace();
@@ -81,14 +86,26 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	callbackContext.success(output);
     }
 
-                        @Override
-			public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-			    if (action.equals("apps")) {
-				this.getApps(callbackContext, args.getInt(0));
+
+    private void runActivity(CallbackContext callbackContext, String packageName){
+	if (pm == null){
+	    CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
+	    pm = activity.getPackageManager();
+	}
+	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
+	this.cordova.getActivity().startActivity( LaunchIntent );
+    }
+                            @Override
+			    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+				if (action.equals("runActivity")){
+				    this.runActivity(callbackContext, args.getString(0));
+				}
+				if (action.equals("apps")) {
+				    this.getApps(callbackContext, args.getInt(0));
+				}
+				if (action.equals("echo")) {
+				    callbackContext.success(args.getString(0));
+				}
+				return false;
 			    }
-			    if (action.equals("echo")){
-				callbackContext.success(args.getString(0));
-			    }
-			    return false;
-			}
 }

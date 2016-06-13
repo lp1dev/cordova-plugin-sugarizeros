@@ -19,6 +19,10 @@ sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", flags);
 }
 
+sugarizerOS.runActivity = function(packageName){
+    exec(null, null, "SugarizerOSPlugin", "runActivity", [packageName])
+}
+
 sugarizerOS.applicationsToActivities = function(applications){
     var activities = [];
     	for (i = 0; i < applications.length; i++){
