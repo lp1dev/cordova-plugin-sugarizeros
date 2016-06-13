@@ -1,24 +1,16 @@
-var sugarizerOS = (
-    function () {
-	var self = {};
-	var exec = require('cordova/exec');
-	
-	self.init = function(){
-	    console.log("SugarizerOS initialized");
-	}
+var sugarizerOS = {};
+var exec = require('cordova/exec');
 
-	self.get_applications = function(){
-	    exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", []);
-	}
+sugarizerOS.init = function(){
+    console.log("SugarizerOS initialized");
+}
 
-	self.on_get_applications_success = function(apps){
-	    console.log(apps);
-	}
+sugarizerOS.getAndroidApplications = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", []);
+}
 
-	self.on_get_applications_failure = function(error){
-	    console.log(error);
-	}
-	return self;
-    }
-)();
+sugarizerOS.init();
 
+if (window){
+    window.sugarizerOS = sugarizerOS;
+}
