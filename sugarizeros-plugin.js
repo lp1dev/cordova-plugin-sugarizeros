@@ -1,6 +1,7 @@
 define([], function(){
     var sugarizerOS = {};
     var exec = require('cordova/exec');
+    sugarizerOS.appsLoaded = false;
     
     sugarizerOS.init = function(){
 	if (window){
@@ -18,6 +19,7 @@ define([], function(){
     
     sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
 	exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", flags);
+	sugarizerOS.appsLoaded = true;
     }
     
     sugarizerOS.runActivity = function(packageName){
