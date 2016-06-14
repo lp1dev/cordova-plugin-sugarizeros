@@ -1,5 +1,6 @@
 var sugarizerOS = {};
 var exec = require('cordova/exec');
+var env = require('sugar-web/env');
 
 sugarizerOS.applicationsLoaded = false;
 
@@ -27,6 +28,10 @@ sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
 
 sugarizerOS.runActivity = function(packageName){
     exec(null, null, "SugarizerOSPlugin", "runActivity", [packageName])
+}
+
+sugarizerOS.runSettings = function(){
+    exec(null, null, "SugarizerOSPlugin", "runSettings", []);
 }
 
 sugarizerOS.applicationsToActivities = function(applications){

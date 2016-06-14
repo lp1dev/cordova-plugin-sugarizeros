@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.util.Base64;
 
 import org.apache.cordova.CallbackContext;
@@ -92,6 +93,11 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
 
+    private void runSettings(CallbackContext callbackContext){
+	cordova.getActivity().startActivity(
+					    new Intent(Settings.ACTION_SETTINGS));
+    }
+
     private void runActivity(CallbackContext callbackContext, String packageName){
 	if (pm == null){
 	    CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
@@ -100,17 +106,20 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
 	this.cordova.getActivity().startActivity( LaunchIntent );
     }
-                                @Override
-				public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-				    if (action.equals("runActivity")){
-					this.runActivity(callbackContext, args.getString(0));
-				    }
-				    if (action.equals("apps")) {
-					this.getApps(callbackContext, args.getInt(0));
-				    }
-				    if (action.equals("echo")) {
-					callbackContext.success(args.getString(0));
-				    }
-				    return false;
-				}
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+	if (action.equals("runActivity")){
+	    this.runActivity(callbackContext, args.getString(0));
+	}
+	if (action.equals("runSettings")){
+	    this.runSettings(callbackContext);
+	}
+	if (action.equals("apps")) {
+	    this.getApps(callbackContext, args.getInt(0));
+	}
+	if (action.equals("echo")) {
+	    callbackContext.success(args.getString(0));
+	}
+	return false;
+    }
 }
