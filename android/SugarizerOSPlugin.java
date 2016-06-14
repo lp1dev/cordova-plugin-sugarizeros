@@ -27,7 +27,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 	byte[] byteArray = byteArrayOutputStream .toByteArray();
 	System.out.println(Base64.encodeToString(byteArray, Base64.DEFAULT));
-	return Base64.encodeToString(byteArray, Base64.DEFAULT);
+	return String.format("data:image/png;base64,%s", Base64.encodeToString(byteArray, Base64.DEFAULT));
     }
 
     private Bitmap getBitmap(Drawable drawable){
