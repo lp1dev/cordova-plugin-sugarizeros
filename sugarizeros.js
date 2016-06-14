@@ -1,6 +1,5 @@
 var sugarizerOS = {};
 var exec = require('cordova/exec');
-var env = require('sugar-web/env');
 
 sugarizerOS.applicationsLoaded = false;
 
