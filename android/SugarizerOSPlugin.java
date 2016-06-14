@@ -23,12 +23,15 @@ import java.util.List;
 public class SugarizerOSPlugin extends CordovaPlugin {
     private PackageManager pm;
 
-    private String bitmapToBase64(Bitmap bitmap){
-	ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-	bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-	byte[] byteArray = byteArrayOutputStream .toByteArray();
-	System.out.println(Base64.encodeToString(byteArray, Base64.DEFAULT));
-	return String.format("data:image/png;base64,%s", Base64.encodeToString(byteArray, Base64.DEFAULT));
+
+
+    private String drawableToBase64(Drawable drawable){
+	BitmapDrawable bitDw = ((BitmapDrawable) drawable);
+	Bitmap bitmap = bitDw.getBitmap();
+	ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+	byte[] bitmapByte = stream.toByteArray();
+	return String.format("data:image/jpeg;base64,%s", Base64.encodeToString(bitmapByte, Base64.DEFAULT));
     }
 
     private Bitmap getBitmap(Drawable drawable){
@@ -59,7 +62,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 		CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
 		pm = activity.getPackageManager();
 	    }
-	    return bitmapToBase64(getBitmap(pm.getApplicationIcon(packageName)));
+	    return this.drawableToBase64(pm.getApplicationIcon(packageName));
 	} catch (PackageManager.NameNotFoundException e) {
 	    e.printStackTrace();
 	}
@@ -106,20 +109,20 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
 	this.cordova.getActivity().startActivity( LaunchIntent );
     }
-    @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-	if (action.equals("runActivity")){
-	    this.runActivity(callbackContext, args.getString(0));
+        @Override
+	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+	    if (action.equals("runActivity")){
+		this.runActivity(callbackContext, args.getString(0));
+	    }
+	    if (action.equals("runSettings")){
+		this.runSettings(callbackContext);
+	    }
+	    if (action.equals("apps")) {
+		this.getApps(callbackContext, args.getInt(0));
+	    }
+	    if (action.equals("echo")) {
+		callbackContext.success(args.getString(0));
+	    }
+	    return false;
 	}
-	if (action.equals("runSettings")){
-	    this.runSettings(callbackContext);
-	}
-	if (action.equals("apps")) {
-	    this.getApps(callbackContext, args.getInt(0));
-	}
-	if (action.equals("echo")) {
-	    callbackContext.success(args.getString(0));
-	}
-	return false;
-    }
 }
