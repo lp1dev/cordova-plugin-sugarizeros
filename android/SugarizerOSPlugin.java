@@ -23,8 +23,6 @@ import java.util.List;
 public class SugarizerOSPlugin extends CordovaPlugin {
     private PackageManager pm;
 
-
-
     private String drawableToBase64(Drawable drawable){
 	BitmapDrawable bitDw = ((BitmapDrawable) drawable);
 	Bitmap bitmap = bitDw.getBitmap();
