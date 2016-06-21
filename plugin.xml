@@ -46,14 +46,8 @@
       </feature>
     </config-file>
     
-    <config-file target="config.xml" parent="/*">
-      <feature name="WifiPlugin">
-	<param name="android-package" value="org.olpcfrance.sugarizer.WifiPlugin"/>
-      </feature>
-    </config-file>
-
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
     <source-file src="android/SugarizerOSPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
-    <source-file src="android/WifiPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
+    <source-file src="android/SugarWifiManager.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
