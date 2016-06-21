@@ -44,6 +44,9 @@
       <feature name="SugarizerOSPlugin">
 	<param name="android-package" value="org.olpcfrance.sugarizer.SugarizerOSPlugin"/>
       </feature>
+      <feature name="WifiPlugin">
+	<param name="android-package" value="org.olpcfrance.sugarizer.WifiPlugin"/>
+      </feature>
     </config-file>
     
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
