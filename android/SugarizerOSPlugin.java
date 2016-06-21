@@ -121,7 +121,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 		if (action.equals("echo")) {
 		    callbackContext.success(args.getString(0));
 		}
-		if (action.equals("scanWifi")){
+		if (action.equals("wifi")){
 		    SugarWifiManager.scanWifi(callbackContext, cordova.getActivity());
 		}
 		return false;
