@@ -12,7 +12,7 @@
   </engines>
 
   <js-module src="sugarizeros.js" name="sugarizerOsPlugin">
-    <clobbers target="window.sugarizeros"/>
+    <clobbers target="window.SugarizerOS"/>
   </js-module>
 
   <platform name="android">
@@ -48,7 +48,7 @@
 	<param name="android-package" value="org.olpcfrance.sugarizer.WifiPlugin"/>
       </feature>
     </config-file>
-    
+
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
     <source-file src="android/SugarizerOSPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
     <source-file src="android/WifiPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>

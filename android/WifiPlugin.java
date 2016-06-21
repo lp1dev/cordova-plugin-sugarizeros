@@ -42,7 +42,7 @@ public class WifiPlugin extends CordovaPlugin {
                     callbackContext.success(output);
                 }
                 catch (JSONException e) {
-                    callbackContext.error(e.toString());
+                    callbackContext.error("Android:"+e.toString());
                     e.printStackTrace();
                 }
             }
@@ -56,7 +56,8 @@ public class WifiPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals("scanWifi")){
+	Log.e("WifiPlugin", action);
+	if (action.equals("scanWifi")){
             this.scanWifi(callbackContext);
         }
         return false;
