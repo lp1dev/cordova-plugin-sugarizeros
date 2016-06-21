@@ -17,7 +17,7 @@
        under the License.
  */
 
-package org.olpc_france.sugarizeros;
+package org.olpcfrance.sugarizeros;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;

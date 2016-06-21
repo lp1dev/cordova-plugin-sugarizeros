@@ -20,6 +20,8 @@
 
     <config-file target="AndroidManifest.xml" parent="/manifest">
       <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+      <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+      <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
     </config-file>
     
     <config-file target="AndroidManifest.xml" parent="/manifest/application">
@@ -46,5 +48,6 @@
     
     <source-file src="android/MainActivity.java" target-dir="src/org/olpcfrance/sugarizer"/>
     <source-file src="android/SugarizerOSPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
+    <source-file src="android/WifiPlugin.java" target-dir="src/org/olpcfrance/sugarizer"/>
   </platform>
 </plugin>
