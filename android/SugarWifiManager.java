@@ -8,6 +8,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,16 +19,16 @@ public  class SugarWifiManager{
 
     public static void scanWifi(final CallbackContext callbackContext, Context appContext){
         WifiManager mWifiManager;
-
         IntentFilter i = new IntentFilter();
         i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-
         appContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 JSONArray output = new JSONArray();
                 WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
                 List<ScanResult> scanResults = mWifiManager.getScanResults();
+
                 try {
                     for (int i = 0; i < scanResults.size(); i++) {
                         JSONObject object = new JSONObject();
@@ -38,7 +39,9 @@ public  class SugarWifiManager{
                         object.put("RSSI", scanResult.level);
                         output.put(object);
                     }
-                    callbackContext.success(output);
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, output);
+                    result.setKeepCallback(true);
+                    callbackContext.sendPluginResult(result);
                 } catch (JSONException e) {
                     callbackContext.error("Android:" + e.toString());
                     e.printStackTrace();
