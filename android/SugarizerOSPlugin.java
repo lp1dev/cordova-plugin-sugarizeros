@@ -109,7 +109,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
     private void scanNetwork(CallbackContext callbackContext, Context context){
-	callbackContext.success(["coucou", "test"]);
+	callbackContext.success("OUTPUTScanNetwork");
     }
     
     
