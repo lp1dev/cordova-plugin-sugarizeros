@@ -114,18 +114,23 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
 	private void scanWifi(final CallbackContext callbackContext){
+		callbackContext.success("SORTIE 0");
+
 		WifiManager mWifiManager;
 		Context appContext = cordova.getActivity();
 
 		IntentFilter i = new IntentFilter();
 		i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-
+		callbackContext.success("SORTIE 1");
 		appContext.registerReceiver(new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				JSONArray output = new JSONArray();
 				WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+				callbackContext.success("SORTIE 2");
 				List<ScanResult> scanResults = mWifiManager.getScanResults();
+				callbackContext.success("SORTIE 3");
+
 				try {
 					for (int i = 0; i < scanResults.size(); i++) {
 						JSONObject object = new JSONObject();
