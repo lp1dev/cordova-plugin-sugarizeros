@@ -110,7 +110,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
     private void scanNetwork(CallbackContext callbackContext, Context context){
-	callbackContext.success("OUTPUTScanNetwork");
+	SugarWifiManager.scanWifi(callbackContext, context);
     }
     
     
