@@ -49,7 +49,7 @@ sugarizerOS.applicationsToActivities = function(applications){
 	    instances: [],
 	    name: applications[i].name,
 	    version: 0,
-	    type: "Android"});
+	    type: "native"});
     }
     return activities;
 }
