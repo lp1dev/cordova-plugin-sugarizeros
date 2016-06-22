@@ -114,7 +114,6 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
 	private void scanWifi(final CallbackContext callbackContext){
-		callbackContext.success("SORTIE 0");
 
 		WifiManager mWifiManager;
 		Context appContext = cordova.getActivity();
