@@ -48,7 +48,7 @@ sugarizerOS.applicationsToActivities = function(applications){
 	    id: applications[i].packageName,
 	    instances: [],
 	    name: applications[i].name,
-	    version: 0,
+	    version: applications[i].version,
 	    type: "native"});
     }
     return activities;
