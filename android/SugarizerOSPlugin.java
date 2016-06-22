@@ -1,12 +1,16 @@
 package org.olpcfrance.sugarizer;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.util.Base64;
 import android.content.Context;
@@ -97,7 +101,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 
     private void runSettings(CallbackContext callbackContext){
 	cordova.getActivity().startActivity(
-					    new Intent(Settings.ACTION_SETTINGS));
+			new Intent(Settings.ACTION_SETTINGS));
     }
 
     private void runActivity(CallbackContext callbackContext, String packageName){
@@ -109,11 +113,40 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	this.cordova.getActivity().startActivity( LaunchIntent );
     }
 
-    private void scanNetwork(CallbackContext callbackContext, Context context){
-	SugarWifiManager.scanWifi(callbackContext, context);
-    }
-    
-    
+	public static void scanWifi(final CallbackContext callbackContext, Context appContext){
+		WifiManager mWifiManager;
+
+		IntentFilter i = new IntentFilter();
+		i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+
+		appContext.registerReceiver(new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				JSONArray output = new JSONArray();
+				WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+				List<ScanResult> scanResults = mWifiManager.getScanResults();
+				try {
+					for (int i = 0; i < scanResults.size(); i++) {
+						JSONObject object = new JSONObject();
+						ScanResult scanResult = scanResults.get(i);
+						object.put("SSID", scanResult.SSID);
+						object.put("BSSID", scanResult.BSSID);
+						object.put("capabalities", scanResult.capabilities);
+						object.put("RSSI", scanResult.level);
+						output.put(object);
+					}
+					callbackContext.success(output);
+				} catch (JSONException e) {
+					callbackContext.error("Android:" + e.toString());
+					e.printStackTrace();
+				}
+			}
+		}
+				, i);
+
+		mWifiManager = (WifiManager) appContext.getSystemService(Context.WIFI_SERVICE);
+		mWifiManager.startScan();
+	}
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 	if (action.equals("runActivity")){
@@ -126,10 +159,10 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	    this.getApps(callbackContext, args.getInt(0));
 	}
 	if (action.equals("scanWifi")) {
-	    this.scanNetwork(callbackContext, cordova.getActivity());
+	    this.scanWifi(callbackContext, cordova.getActivity());
 	}
 	if (action.equals("scanNetwork")){
-	    this.scanNetwork(callbackContext, cordova.getActivity());
+	    this.scanWifi(callbackContext, cordova.getActivity());
 	}
 	return false;
     }
