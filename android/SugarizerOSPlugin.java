@@ -107,23 +107,24 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
 	this.cordova.getActivity().startActivity( LaunchIntent );
     }
-            @Override
-	    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-		if (action.equals("runActivity")){
-		    this.runActivity(callbackContext, args.getString(0));
-		}
-		if (action.equals("runSettings")){
-		    this.runSettings(callbackContext);
-		}
-		if (action.equals("apps")) {
-		    this.getApps(callbackContext, args.getInt(0));
-		}
-		if (action.equals("echo")) {
-		    callbackContext.success(args.getString(0));
-		}
-		if (action.equals("wifi")){
-		    SugarWifiManager.scanWifi(callbackContext, cordova.getActivity());
-		}
-		return false;
-	    }
+    
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+	if (action.equals("runActivity")){
+	    this.runActivity(callbackContext, args.getString(0));
+	}
+	if (action.equals("runSettings")){
+	    this.runSettings(callbackContext);
+	}
+	if (action.equals("apps")) {
+	    this.getApps(callbackContext, args.getInt(0));
+	}
+	if (action.equals("echo")) {
+	    callbackContext.success(args.getString(0));
+	}
+	if (action.equals("scanNetwork")){
+	    SugarWifiManager.scanWifi(callbackContext, cordova.getActivity());
+	}
+	return false;
+    }
 }

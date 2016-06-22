@@ -18,7 +18,7 @@ sugarizerOS.init = function(){
 }
 
 sugarizerOS.echo = function(onSuccess, onFailure, string){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "echo", string);
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "wifi", string);
 }
 
 sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
@@ -26,7 +26,7 @@ sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
 }
 
 sugarizerOS.scanWifi = function(onSuccess, onFailure){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "wifi", []);
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "scanNetwork", []);
 }
 
 sugarizerOS.runActivity = function(packageName){
