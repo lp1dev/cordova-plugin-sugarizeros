@@ -2,6 +2,7 @@ package org.olpcfrance.sugarizer;
 
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -57,14 +58,21 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	    } else if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
 	    } else {
 		JSONObject application = new JSONObject();
-		try {
-		    application.put("packageName", packages.get(i).packageName);
-		    application.put("flags", packages.get(i).flags);
-		    application.put("name", pm.getApplicationLabel(packages.get(i)));
-		    application.put("icon", getIcon(packages.get(i).packageName));
-		} catch (JSONException e) {
-		    e.printStackTrace();
-		}
+			try {
+				PackageInfo packageInfo = pm.getPackageInfo(packages.get(i).packageName, 0);
+				try {
+					application.put("packageName", packages.get(i).packageName);
+					application.put("flags", packages.get(i).flags);
+					application.put("name", pm.getApplicationLabel(packages.get(i)));
+					application.put("icon", getIcon(packages.get(i).packageName));
+					application.put("version", packageInfo.versionName);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			catch (PackageManager.NameNotFoundException e) {
+				e.printStackTrace();
+			}
 		output.put(application);
 	    }
 	}
