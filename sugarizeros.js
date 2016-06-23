@@ -17,6 +17,10 @@ sugarizerOS.init = function(){
     }
 }
 
+sugarizerOS.chooseLauncher = function(){
+    exec(null, null, "SugarizerOSPlugin", "chooseLauncher", []);
+}
+
 sugarizerOS.isDefaultLauncher = function(onSuccess, onFailure){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
 }
