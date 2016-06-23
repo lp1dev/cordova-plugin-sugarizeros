@@ -17,6 +17,10 @@ sugarizerOS.init = function(){
     }
 }
 
+sugarizerOS.isDefaultLauncher = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
+}
+
 sugarizerOS.echo = function(onSuccess, onFailure, string){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "wifi", string);
 }

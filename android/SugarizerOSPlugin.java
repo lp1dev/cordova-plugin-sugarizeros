@@ -1,6 +1,9 @@
 package org.olpcfrance.sugarizer;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -19,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SugarizerOSPlugin extends CordovaPlugin {
@@ -94,20 +98,46 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	this.cordova.getActivity().startActivity(LaunchIntent);
     }
 
+	private void isMyAppLauncherDefault(CallbackContext callbackContext, Context appContext) {
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+		filter.addCategory(Intent.CATEGORY_HOME);
+
+		List<IntentFilter> filters = new ArrayList<IntentFilter>();
+		filters.add(filter);
+
+		final String myPackageName = appContext.getPackageName();
+		List<ComponentName> activities = new ArrayList<ComponentName>();
+		if (pm == null)
+			pm = (PackageManager) appContext.getPackageManager();
+
+		// You can use name of your package here as third argument
+		pm.getPreferredActivities(filters, activities, null);
+
+		for (ComponentName activity : activities) {
+			if (myPackageName.equals(activity.getPackageName())) {
+				callbackContext.success(1);
+			}
+		}
+		callbackContext.success(0);
+	}
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 	if (action.equals("runActivity")){
 	    this.runActivity(callbackContext, args.getString(0));
 	}
-	if (action.equals("runSettings")){
+	else if (action.equals("runSettings")){
 	    this.runSettings(callbackContext);
 	}
-	if (action.equals("apps")) {
+	else if (action.equals("apps")) {
 	    this.getApps(callbackContext, args.getInt(0));
 	}
-	if (action.equals("scanWifi")) {
+	else if (action.equals("scanWifi")) {
 		SugarWifiManager.scanWifi(callbackContext, cordova.getActivity());
 		return true;
+	}
+	else if (action.equals("isDefaultLauncher")){
+		this.isMyAppLauncherDefault(callbackContext, cordova.getActivity());
 	}
 	return false;
     }
