@@ -53,6 +53,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     private void getApps(CallbackContext callbackContext, int flags){
 	JSONArray output = new JSONArray();
 	CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
+		final String packageName = activity.getPackageName();
 	pm = activity.getPackageManager();
 
 	List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
@@ -60,7 +61,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	    ApplicationInfo app = packages.get(i);
 	    if((app.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 1) {
 	    } else if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
-	    } else {
+	    } else if (packageName != packages.get(i).packageName){
 		JSONObject application = new JSONObject();
 			try {
 				PackageInfo packageInfo = pm.getPackageInfo(packages.get(i).packageName, 0);
@@ -98,21 +99,26 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	this.cordova.getActivity().startActivity(LaunchIntent);
     }
 
+	private void chooseLauncher(CallbackContext callbackContext, Context appContext){
+		Intent startMain = new Intent(Intent.ACTION_MAIN);
+		startMain.addCategory(Intent.CATEGORY_HOME);
+		startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		appContext.startActivity(startMain);
+	}
+
 	private void isMyAppLauncherDefault(CallbackContext callbackContext, Context appContext) {
 		final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-		filter.addCategory(Intent.CATEGORY_HOME);
+		final String myPackageName = appContext.getPackageName();
 
+		filter.addCategory(Intent.CATEGORY_HOME);
 		List<IntentFilter> filters = new ArrayList<IntentFilter>();
 		filters.add(filter);
 
-		final String myPackageName = appContext.getPackageName();
 		List<ComponentName> activities = new ArrayList<ComponentName>();
 		if (pm == null)
-			pm = (PackageManager) appContext.getPackageManager();
+			pm = appContext.getPackageManager();
 
-		// You can use name of your package here as third argument
 		pm.getPreferredActivities(filters, activities, null);
-
 		for (ComponentName activity : activities) {
 			if (myPackageName.equals(activity.getPackageName())) {
 				callbackContext.success(1);
@@ -138,6 +144,9 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	}
 	else if (action.equals("isDefaultLauncher")){
 		this.isMyAppLauncherDefault(callbackContext, cordova.getActivity());
+	}
+	else if (action.equals("chooseLauncher")){
+		this.chooseLauncher(callbackContext, cordova.getActivity());
 	}
 	return false;
     }
