@@ -2,6 +2,7 @@ var sugarizerOS = {};
 var exec = require('cordova/exec');
 
 sugarizerOS.applicationsLoaded = false;
+sugarizerOS.isDefaultLauncher = false;
 
 sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
@@ -10,6 +11,7 @@ sugarizerOS.setApplicationsLoaded = function(value){
 sugarizerOS.init = function(){
     if (window){
 	window.sugarizerOS = sugarizerOS;
+	sugarizerOS.checkIfDefaultLauncher();
 	console.log("SugarizerOS initialized");
     }
     else{
@@ -21,8 +23,15 @@ sugarizerOS.chooseLauncher = function(){
     exec(null, null, "SugarizerOSPlugin", "chooseLauncher", []);
 }
 
-sugarizerOS.isDefaultLauncher = function(onSuccess, onFailure){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
+sugarizerOS.checkIfDefaultLauncher = function(){
+    exec(sugarizerOS.setIsDefaultLauncher, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
+}
+
+sugarizerOS.setIsDefaultLauncher = function(value){
+    if (value)
+	sugarizerOS.isDefaultLauncher = true;
+    else
+	sugarizerOS.isDefaultLauncher = false;
 }
 
 sugarizerOS.echo = function(onSuccess, onFailure, string){
