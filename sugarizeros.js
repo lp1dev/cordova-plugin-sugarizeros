@@ -3,6 +3,7 @@ var exec = require('cordova/exec');
 
 sugarizerOS.applicationsLoaded = false;
 sugarizerOS.isDefaultLauncher = false;
+sugarizerOS.networks = [];
 
 sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
@@ -42,8 +43,12 @@ sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", flags);
 }
 
-sugarizerOS.scanWifi = function(onSuccess, onFailure){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "scanWifi", []);
+sugarizerOS.updateNetworks = function(networks){
+    sugarizerOS.networks = networks;
+}
+
+sugarizerOS.scanWifi = function(){
+    exec(sugarizerOS.updateNetworks, null, "SugarizerOSPlugin", "scanWifi", []);
 }
 
 sugarizerOS.runActivity = function(packageName){
