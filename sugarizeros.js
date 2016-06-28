@@ -24,7 +24,7 @@ sugarizerOS.chooseLauncher = function(){
 }
 
 sugarizerOS.checkIfDefaultLauncher = function(){
-    exec(sugarizerOS.setIsDefaultLauncher, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
+    exec(sugarizerOS.setIsDefaultLauncher, null, "SugarizerOSPlugin", "isDefaultLauncher", []);
 }
 
 sugarizerOS.setIsDefaultLauncher = function(value){
@@ -35,7 +35,7 @@ sugarizerOS.setIsDefaultLauncher = function(value){
 }
 
 sugarizerOS.echo = function(onSuccess, onFailure, string){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "wifi", string);
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "echo", string);
 }
 
 sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
