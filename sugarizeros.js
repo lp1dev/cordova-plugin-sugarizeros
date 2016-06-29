@@ -9,7 +9,7 @@ sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
 }
 
-sugarizerOS.getEncryptionString(capabilities){
+sugarizerOS.getEncryptionString = function(capabilities){
     var WEP = "[WEP"
     var WPA2 = "[WPA2"
     var WPA = "[WPA"
