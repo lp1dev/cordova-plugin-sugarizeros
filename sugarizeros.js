@@ -9,6 +9,19 @@ sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
 }
 
+sugarizerOS.getEncryptionString(capabilities){
+    var WEP = "[WEP"
+    var WPA2 = "[WPA2"
+    var WPA = "[WPA"
+    if (capabilities.indexOf(WEP) != -1)
+	return "WEP";
+    else if (capabilities.indexOf(WPA2) != -1)
+	return "WPA2";
+    else if (capabilities.indexOf(WPA) != -1)
+	return "WPA";
+    return "OPEN";
+}
+
 sugarizerOS.joinNetwork = function(SSID, pass, capabilities){
     exec(null, null, "SugarizerOSPlugin", "joinNetwork", [SSID, pass, capabilities]);
 }

@@ -72,7 +72,7 @@ public  class SugarWifiManager{
                         ScanResult scanResult = scanResults.get(i);
                         object.put("SSID", scanResult.SSID);
                         object.put("BSSID", scanResult.BSSID);
-                        object.put("capabalities", scanResult.capabilities);
+                        object.put("capabilities", scanResult.capabilities);
                         object.put("RSSI", scanResult.level);
                         output.put(object);
                     }
