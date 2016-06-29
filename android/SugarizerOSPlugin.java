@@ -148,6 +148,9 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	else if (action.equals("chooseLauncher")){
 		this.chooseLauncher(callbackContext, cordova.getActivity());
 	}
+    else if (action.equals("joinNetwork")){
+        SugarWifiManager.joinNetwork(args.getString(0), args.getString(1), args.getString(2), cordova.getActivity());
+    }
 	return false;
     }
 }

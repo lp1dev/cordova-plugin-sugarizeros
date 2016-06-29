@@ -9,6 +9,10 @@ sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
 }
 
+sugarizerOS.joinNetwork = function(SSID, pass, capabilities){
+    exec(null, null, "SugarizerOSPlugin", "joinNetwork", [SSID, pass, capabilities]);
+}
+
 sugarizerOS.init = function(){
     if (window){
 	window.sugarizerOS = sugarizerOS;
