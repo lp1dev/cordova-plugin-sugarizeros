@@ -1,6 +1,7 @@
 var sugarizerOS = {};
 var exec = require('cordova/exec');
 
+sugarizerOS.max
 sugarizerOS.applicationsLoaded = false;
 sugarizerOS.isDefaultLauncher = false;
 sugarizerOS.networks = [];
@@ -22,8 +23,8 @@ sugarizerOS.getEncryptionString = function(capabilities){
     return "OPEN";
 }
 
-sugarizerOS.joinNetwork = function(SSID, pass, capabilities){
-    exec(null, null, "SugarizerOSPlugin", "joinNetwork", [SSID, pass, capabilities]);
+sugarizerOS.joinNetwork = function(SSID, pass, capabilities, onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "joinNetwork", [SSID, pass, capabilities]);
 }
 
 sugarizerOS.init = function(){
@@ -96,6 +97,7 @@ sugarizerOS.applicationsToActivities = function(applications){
 sugarizerOS.initActivitiesPreferences = function(){
     if (!sugarizerOS.applicationsLoaded){
 	sugarizerOS.getAndroidApplications(function(applications){
+	    console.log("getAndroidapplicationsCalled");
 	    var activities = preferences.getActivities();
 	    for (i = 0; i < activities.length; i++)
 		if (activities[i].id == applications[0].packageName)
