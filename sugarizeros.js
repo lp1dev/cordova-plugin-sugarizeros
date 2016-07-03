@@ -13,9 +13,10 @@ sugarizerOS.addNetworkIconToCache = function(icon){
     }
 }
 
-sugarizerOS.getNetworkIconFromCache = function(icon){
-    if (networkIconsCache.indexOf(icon) > -1){
-	return networkIconsCache[networkIconsCache.indexOf(icon)];
+sugarizerOS.getNetworkIconFromCache = function(BSSID){
+    for (var i = 0;i < sugarizerOS.networkIconsCache.length; i++){
+	if (sugarizerOS.networkIconsCache[i].BSSID == BSSID)
+	    return sugarizerOS.networkIconsCache[i];
     }
 }
 
