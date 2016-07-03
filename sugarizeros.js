@@ -8,7 +8,7 @@ sugarizerOS.networks = [];
 sugarizerOS.networkIconsCache = [];
 
 sugarizerOS.addNetworkIconToCache = function(icon){
-    if (networkIconsCache.indexOf(icon) == -1){
+    if (!sugarizerOS.getNetworkIconFromCache(icon.BSSID)){
 	networkIconsCache.push(icon);
     }
 }
