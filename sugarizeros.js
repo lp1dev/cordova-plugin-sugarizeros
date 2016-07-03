@@ -1,10 +1,23 @@
 var sugarizerOS = {};
 var exec = require('cordova/exec');
 
-sugarizerOS.max
+sugarizerOS.minRSSI = -20
 sugarizerOS.applicationsLoaded = false;
 sugarizerOS.isDefaultLauncher = false;
 sugarizerOS.networks = [];
+sugarizerOS.networkIconsCache = [];
+
+sugarizerOS.addNetworkIconToCache = function(icon){
+    if (networkIconsCache.indexOf(icon) == -1){
+	networkIconsCache.push(icon);
+    }
+}
+
+sugarizerOS.getNetworkIconFromCache = function(icon){
+    if (networkIconsCache.indexOf(icon) > -1){
+	return networkIconsCache[networkIconsCache.indexOf(icon)];
+    }
+}
 
 sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
