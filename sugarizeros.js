@@ -7,7 +7,7 @@ sugarizerOS.isDefaultLauncher = false;
 sugarizerOS.networks = [];
 sugarizerOS.networkIconsCache = [];
 
-sugarizerOS.addNetworkIconToCache = function(icon)
+sugarizerOS.addNetworkIconToCache = function(icon){
     if (!sugarizerOS.getNetworkIconFromCache(icon.BSSID)){
 	sugarizerOS.networkIconsCache.push(icon);
     }
