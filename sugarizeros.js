@@ -7,6 +7,21 @@ sugarizerOS.isDefaultLauncher = false;
 sugarizerOS.networks = [];
 sugarizerOS.networkIconsCache = [];
 
+sugarizerOS.addApplicationToJournal = function (callback, application, datastore) {
+    var mimetype = "text/plain";
+    var type = mimetype.split("/")[0];
+    var metadata = {
+	mimetype: mimetype,
+	title: application.name,
+	activity: application.id,
+	timestamp: new Date().getTime(),
+	creation_time: new Date().getTime(),
+	file_size: 0,
+	icon: application.icon
+    };
+    datastore.create(metadata, callback, null);
+}
+
 sugarizerOS.addNetworkIconToCache = function(icon){
     if (!sugarizerOS.getNetworkIconFromCache(icon.BSSID)){
 	sugarizerOS.networkIconsCache.push(icon);
