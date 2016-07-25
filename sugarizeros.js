@@ -132,7 +132,7 @@ sugarizerOS.initActivitiesPreferences = function(){
 		if (activities[i].id == applications[0].packageName)
 		    sugarizerOS.setApplicationsLoaded(true);
 	    if (!sugarizerOS.applicationsLoaded){
-		activities = sugarizerOS.applicationsToActivities(applications).concat(activities);
+		activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
 	    preferences.setActivities(activities);
 		sugarizerOS.setApplicationsLoaded(true);
 	    }

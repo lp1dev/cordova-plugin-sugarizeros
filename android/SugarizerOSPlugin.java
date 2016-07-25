@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
+import android.util.Base64;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
@@ -32,8 +33,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 	byte[] bitmapByte = stream.toByteArray();
-		return "";
-//	return String.format("data:image/png;base64,%s", Base64.encodeToString(bitmapByte, Base64.DEFAULT));
+	return String.format("data:image/png;base64,%s", Base64.encodeToString(bitmapByte, Base64.DEFAULT));
     }
 
     private String getIcon(String packageName){
@@ -60,7 +60,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	    ApplicationInfo app = packages.get(i);
 	    if((app.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) == 1) {
 	    } else if ((app.flags & ApplicationInfo.FLAG_SYSTEM) == 1) {
-	    } else if (packageName != packages.get(i).packageName){
+	    } else if (!packageName.equals(packages.get(i).packageName)){
 		JSONObject application = new JSONObject();
 			try {
 				PackageInfo packageInfo = pm.getPackageInfo(packages.get(i).packageName, 0);
@@ -84,20 +84,22 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
 
-	private void resetDefaultLauncherSettings(Context context){
+	private ComponentName resetDefaultLauncherSettings(Context context){
+
+
 		if (pm == null) pm = context.getPackageManager();
 		ComponentName mockupComponent = new  ComponentName(MainActivity.class.getPackage().getName(), MainActivity.class.getName());
 
-		pm.setComponentEnabledSetting(mockupComponent,  PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+		pm.setComponentEnabledSetting(mockupComponent, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
 		Intent startMain = new Intent(Intent.ACTION_MAIN);
 		startMain.addCategory(Intent.CATEGORY_HOME);
 		startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(startMain);
 
-		//pm.setComponentEnabledSetting(mockupComponent,  PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
-		// or
 		pm.setComponentEnabledSetting(mockupComponent, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+		return mockupComponent;
+//		pm.setComponentEnabledSetting(mockupComponent,  PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 	}
 
     private void runSettings(CallbackContext callbackContext){
@@ -115,11 +117,13 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     }
 
 	private void chooseLauncher(CallbackContext callbackContext, Context appContext){
-		resetDefaultLauncherSettings(appContext);
+		ComponentName componentName = resetDefaultLauncherSettings(appContext);
 		Intent startMain = new Intent(Intent.ACTION_MAIN);
 		startMain.addCategory(Intent.CATEGORY_HOME);
 		startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(startMain);
+		pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
 	}
 
 	private void isMyAppLauncherDefault(CallbackContext callbackContext, Context appContext) {
