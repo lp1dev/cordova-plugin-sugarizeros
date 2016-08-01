@@ -7,11 +7,7 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.provider.Settings;
-import android.util.Base64;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
@@ -20,34 +16,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SugarizerOSPlugin extends CordovaPlugin {
     private PackageManager pm;
-
-    private String drawableToBase64(Drawable drawable){
-	BitmapDrawable bitDw = ((BitmapDrawable) drawable);
-	Bitmap bitmap = bitDw.getBitmap();
-	ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-	byte[] bitmapByte = stream.toByteArray();
-	return String.format("data:image/png;base64,%s", Base64.encodeToString(bitmapByte, Base64.DEFAULT));
-    }
-
-    private String getIcon(String packageName){
-	try {
-	    if (pm == null){
-		CordovaActivity activity = (CordovaActivity) this.cordova.getActivity();
-		pm = activity.getPackageManager();
-	    }
-	    return this.drawableToBase64(pm.getApplicationIcon(packageName));
-	} catch (PackageManager.NameNotFoundException e) {
-	    e.printStackTrace();
-	}
-	return "";
-    }
 
     private void getApps(CallbackContext callbackContext, int flags){
 	JSONArray output = new JSONArray();
@@ -68,7 +41,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 					application.put("packageName", packages.get(i).packageName);
 					application.put("flags", packages.get(i).flags);
 					application.put("name", pm.getApplicationLabel(packages.get(i)));
-					application.put("icon", getIcon(packages.get(i).packageName));
+					application.put("icon", IconCacheManager.getIcon(cordova.getActivity(), pm, packages.get(i).packageName));
 					application.put("version", packageInfo.versionName);
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -168,9 +141,9 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	else if (action.equals("chooseLauncher")){
 		this.chooseLauncher(callbackContext, cordova.getActivity());
 	}
-    else if (action.equals("joinNetwork")){
-        SugarWifiManager.joinNetwork(args.getString(0), args.getString(1), args.getString(2), cordova.getActivity());
-    }
+    else if (action.equals("joinNetwork")) {
+		SugarWifiManager.joinNetwork(args.getString(0), args.getString(1), args.getString(2), cordova.getActivity());
+	}
 	return false;
     }
 }
