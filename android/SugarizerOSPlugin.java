@@ -89,13 +89,17 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	this.cordova.getActivity().startActivity(LaunchIntent);
     }
 
-	private void chooseLauncher(CallbackContext callbackContext, Context appContext){
-		ComponentName componentName = resetDefaultLauncherSettings(appContext);
+    private void chooseLauncher(CallbackContext callbackContext, Context appContext, boolean reset){
+
 		Intent startMain = new Intent(Intent.ACTION_MAIN);
 		startMain.addCategory(Intent.CATEGORY_HOME);
 		startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		appContext.startActivity(startMain);
-		pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+
+		if (reset){
+		    ComponentName componentName = resetDefaultLauncherSettings(appContext);
+		    pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+		}
 
 	}
 
@@ -139,10 +143,19 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 		this.isMyAppLauncherDefault(callbackContext, cordova.getActivity());
 	}
 	else if (action.equals("chooseLauncher")){
-		this.chooseLauncher(callbackContext, cordova.getActivity());
+	    this.chooseLauncher(callbackContext, cordova.getActivity(), true);
+	}
+	else if (action.equals("selectLauncher")){
+	    this.chooseLauncher(callbackContext, cordova.getActivity(), false);
 	}
     else if (action.equals("joinNetwork")) {
 		SugarWifiManager.joinNetwork(args.getString(0), args.getString(1), args.getString(2), cordova.getActivity());
+	}
+	else if (action.equals("getInt")){
+		SharedPreferencesManager.getInt(callbackContext, cordova.getActivity(), args.getString(0));
+	}
+	else if (action.equals("putInt")){
+		SharedPreferencesManager.putInt(cordova.getActivity(), args.getString(0), args.getInt(1));
 	}
 	return false;
     }

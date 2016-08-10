@@ -1,3 +1,4 @@
+
 var sugarizerOS = {};
 var exec = require('cordova/exec');
 
@@ -65,6 +66,18 @@ sugarizerOS.init = function(){
     else{
 	console.log("No window to initialize sugarizerOS");
     }
+}
+
+sugarizerOS.selectLauncher = function(){
+    exec(null, null, "SugarizerOSPlugin", "selectLauncher", []);
+}
+
+sugarizerOS.getInt = function(onSuccess, onFailure, tag){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "getInt", [tag])
+}
+
+sugarizerOS.putInt = function(tag, value, onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "putInt", [tag, value])
 }
 
 sugarizerOS.chooseLauncher = function(){

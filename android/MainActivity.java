@@ -51,6 +51,15 @@ public class MainActivity extends CordovaActivity
     {
         super.onCreate(savedInstanceState);
         mContext = this;
+
+	//Incrementing the number of launches
+	int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);
+	int is_setup = SharedPreferencesManager.getInt(this, SharedPreferencesManager.IS_SETUP_TAG);
+	if (launches >= 0 && is_setup > 0)
+	    launches++;
+	SharedPreferencesManager.putInt(this, SharedPreferencesManager.LAUNCHES_TAG, launches);
+	//
+	
         //Hiding Notification Bar Hacks
         preventStatusBarExpansion(mContext);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -62,6 +71,15 @@ public class MainActivity extends CordovaActivity
         appView.loadUrlIntoView(launchUrl, true);
         setContentView(appView.getView());
     }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if(isFinishing()){
+        }
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
 
     public void customInit(){
         appView = makeWebView();
