@@ -1,5 +1,6 @@
 package org.olpcfrance.sugarizer;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +9,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,6 +82,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	cordova.getActivity().startActivity(
 			new Intent(Settings.ACTION_SETTINGS));
     }
+
 
     private void runActivity(CallbackContext callbackContext, String packageName){
 	if (pm == null){

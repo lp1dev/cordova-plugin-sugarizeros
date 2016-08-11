@@ -36,6 +36,10 @@ sugarizerOS.getNetworkIconFromCache = function(BSSID){
     }
 }
 
+sugarizerOS.setAppsListener = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "setAppsListener", []);
+}
+
 sugarizerOS.setApplicationsLoaded = function(value){
     sugarizerOS.applicationsLoaded = true;
 }

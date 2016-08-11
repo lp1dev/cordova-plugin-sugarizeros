@@ -18,12 +18,16 @@
  */
 
 package org.olpcfrance.sugarizer;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -33,11 +37,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-
 import org.apache.cordova.*;
-
 import java.util.Locale;
-
 
 public class MainActivity extends CordovaActivity
 {
@@ -77,7 +78,7 @@ public class MainActivity extends CordovaActivity
         super.onPause();
         if(isFinishing()){
         }
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
 
@@ -135,7 +136,8 @@ public class MainActivity extends CordovaActivity
 
         Activity activity = (Activity)context;
         overAllLayoutParams = new WindowManager.LayoutParams();
-        overAllLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+	overAllLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
+	//overAllLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_PANEL;
         overAllLayoutParams.gravity = Gravity.TOP;
         overAllLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
         overAllLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
