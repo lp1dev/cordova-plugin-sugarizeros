@@ -1,4 +1,3 @@
-
 var sugarizerOS = {};
 var exec = require('cordova/exec');
 
@@ -34,10 +33,6 @@ sugarizerOS.getNetworkIconFromCache = function(BSSID){
 	if (sugarizerOS.networkIconsCache[i].BSSID == BSSID)
 	    return sugarizerOS.networkIconsCache[i];
     }
-}
-
-sugarizerOS.setAppsListener = function(onSuccess, onFailure){
-    exec(onSuccess, onFailure, "SugarizerOSPlugin", "setAppsListener", []);
 }
 
 sugarizerOS.setApplicationsLoaded = function(value){
@@ -80,6 +75,10 @@ sugarizerOS.getInt = function(onSuccess, onFailure, tag){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "getInt", [tag])
 }
 
+sugarizerOS.resetLaunchesLauncher = function(){
+    sugarizerOS.putInt("LAUNCHES", 0);
+}
+
 sugarizerOS.putInt = function(tag, value, onSuccess, onFailure){
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "putInt", [tag, value])
 }
@@ -104,6 +103,7 @@ sugarizerOS.echo = function(onSuccess, onFailure, string){
 }
 
 sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
+    console.log("getAndroidApplications", "passed");
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", flags);
 }
 
@@ -141,21 +141,28 @@ sugarizerOS.applicationsToActivities = function(applications){
 }
 
 sugarizerOS.initActivitiesPreferences = function(){
-    if (!sugarizerOS.applicationsLoaded){
-	sugarizerOS.getAndroidApplications(function(applications){
-	    console.log("getAndroidapplicationsCalled");
-	    var activities = preferences.getActivities();
-	    for (i = 0; i < activities.length; i++)
-		if (activities[i].id == applications[0].packageName)
-		    sugarizerOS.setApplicationsLoaded(true);
-	    if (!sugarizerOS.applicationsLoaded){
-		activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
-	    preferences.setActivities(activities);
-		sugarizerOS.setApplicationsLoaded(true);
-	    }
+    sugarizerOS.getAndroidApplications(function(applications){
+	applications = sugarizerOS.applicationsToActivities(applications);
+	
+	var activities = preferences.getActivities();
+
+	console.log("applications", applications);
+	console.log("activities", activities);
+	for (var i = 0; i < applications.length; i++){
+	    var index = activities.indexOf(applications[i]);
+	    if (index == -1)
+		activities.push(applications[i])
 	}
-					   , sugarizerOS.log, [0]);
+	for (var j = 0; j < activities.length; j++){
+	    var index = applications.indexOf(activities[j]);
+	    if (index == -1)
+		activities.splice(index, 1);
+	}
+	console.log("activitiesPostPush", activities);
+//	activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
+	preferences.setActivities(activities);
     }
+				       , sugarizerOS.log, [0]);
 }
     
 sugarizerOS.log = function(m){
