@@ -51,35 +51,14 @@ public class MainActivity extends CordovaActivity
     private WindowManager windowManager;
     private WindowManager.LayoutParams overAllLayoutParams;
     private CustomViewGroup customViewGroup;
-    private PackageManager packageManager;
 
-    private boolean isMyAppLauncherDefault(Context appContext) {
-        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-        final String myPackageName = appContext.getPackageName();
-
-        filter.addCategory(Intent.CATEGORY_HOME);
-        List<IntentFilter> filters = new ArrayList<IntentFilter>();
-        filters.add(filter);
-
-        List<ComponentName> activities = new ArrayList<ComponentName>();
-        if (packageManager == null)
-            packageManager = appContext.getPackageManager();
-
-        packageManager.getPreferredActivities(filters, activities, null);
-        for (ComponentName activity : activities) {
-            if (myPackageName.equals(activity.getPackageName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         mContext = this;
-        boolean is_default_launcher = isMyAppLauncherDefault(this);
+        boolean is_default_launcher = SugarizerOSPlugin.isMyAppLauncherDefault(this, null);
 
 	//Incrementing the number of launches
 	    int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);

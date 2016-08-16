@@ -1,6 +1,5 @@
 package org.olpcfrance.sugarizer;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,13 +7,14 @@ import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.provider.Settings;
-import android.util.Log;
+import android.net.Uri;
+import android.widget.Toast;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +24,34 @@ import java.util.List;
 
 public class SugarizerOSPlugin extends CordovaPlugin {
     private PackageManager pm;
+
+	public String getDefaultLauncherPackageName(Context context, PackageManager packageManager){
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		ResolveInfo resolveInfo = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+		return resolveInfo.activityInfo.packageName;
+	}
+
+	public static boolean isMyAppLauncherDefault(Context appContext, PackageManager packageManager) {
+		final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+		final String myPackageName = appContext.getPackageName();
+
+		filter.addCategory(Intent.CATEGORY_HOME);
+		List<IntentFilter> filters = new ArrayList<IntentFilter>();
+		filters.add(filter);
+
+		List<ComponentName> activities = new ArrayList<ComponentName>();
+		if (packageManager == null)
+			packageManager = appContext.getPackageManager();
+
+		packageManager.getPreferredActivities(filters, activities, null);
+		for (ComponentName activity : activities) {
+			if (myPackageName.equals(activity.getPackageName())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     private void getApps(CallbackContext callbackContext, int flags){
 	JSONArray output = new JSONArray();
@@ -81,6 +109,7 @@ public class SugarizerOSPlugin extends CordovaPlugin {
     private void runSettings(CallbackContext callbackContext){
 	cordova.getActivity().startActivity(
 			new Intent(Settings.ACTION_SETTINGS));
+		callbackContext.success();
     }
 
 
@@ -91,20 +120,45 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 	}
 	Intent LaunchIntent = pm.getLaunchIntentForPackage(packageName);
 	this.cordova.getActivity().startActivity(LaunchIntent);
+		callbackContext.success();
     }
 
-    private void chooseLauncher(CallbackContext callbackContext, Context appContext, boolean reset){
+	private void openAppSettings(Context context){
+		String packageName =  getDefaultLauncherPackageName(context, pm);
+			if (context == null || packageName == null || packageName.equals("android")) {
+				return;
+			}
+			final Intent i = new Intent();
+			i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+			i.addCategory(Intent.CATEGORY_DEFAULT);
+			i.setData(Uri.parse("package:" + packageName));
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			context.startActivity(i);
+	}
 
+	private void openChooseLauncherPopup(Context context){
 		Intent startMain = new Intent(Intent.ACTION_MAIN);
 		startMain.addCategory(Intent.CATEGORY_HOME);
 		startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		appContext.startActivity(startMain);
+		context.startActivity(startMain);
+	}
 
+    private void chooseLauncher(CallbackContext callbackContext, Context appContext, boolean reset){
+		boolean isDefault = isMyAppLauncherDefault(appContext, pm);
 		if (reset){
-		    ComponentName componentName = resetDefaultLauncherSettings(appContext);
-		    pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-		}
+			ComponentName componentName = resetDefaultLauncherSettings(appContext);
+			pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
+		}
+		if (isDefault)
+			pm.clearPackagePreferredActivities(appContext.getPackageName());
+		openChooseLauncherPopup(appContext);
+		if (reset && isDefault == isMyAppLauncherDefault(appContext, pm)){
+			openAppSettings(appContext);
+		}
+		callbackContext.success();
 	}
 
 	private void isMyAppLauncherDefault(CallbackContext callbackContext, Context appContext) {
