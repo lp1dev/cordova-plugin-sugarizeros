@@ -142,24 +142,22 @@ sugarizerOS.applicationsToActivities = function(applications){
 
 sugarizerOS.initActivitiesPreferences = function(){
     sugarizerOS.getAndroidApplications(function(applications){
-	applications = sugarizerOS.applicationsToActivities(applications);
-	
+	applications = sugarizerOS.applicationsToActivities(applications);	
 	var activities = preferences.getActivities();
 
 	console.log("applications", applications);
 	console.log("activities", activities);
+	for (var j = 0; j < activities.length; j++){
+	    if (activities[j].type && activities[j].type == "native")
+		if (applications.indexOf(activities[j]) == -1)
+		    activities.splice(j, 1);
+	}
 	for (var i = 0; i < applications.length; i++){
 	    var index = activities.indexOf(applications[i]);
 	    if (index == -1)
 		activities.push(applications[i])
 	}
-	for (var j = 0; j < activities.length; j++){
-	    var index = applications.indexOf(activities[j]);
-	    if (index == -1)
-		activities.splice(index, 1);
-	}
 	console.log("activitiesPostPush", activities);
-//	activities = activities.concat(sugarizerOS.applicationsToActivities(applications));
 	preferences.setActivities(activities);
     }
 				       , sugarizerOS.log, [0]);
