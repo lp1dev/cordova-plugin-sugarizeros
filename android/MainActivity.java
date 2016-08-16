@@ -20,9 +20,11 @@
 package org.olpcfrance.sugarizer;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -38,6 +40,9 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import org.apache.cordova.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends CordovaActivity
@@ -46,28 +51,53 @@ public class MainActivity extends CordovaActivity
     private WindowManager windowManager;
     private WindowManager.LayoutParams overAllLayoutParams;
     private CustomViewGroup customViewGroup;
+    private PackageManager packageManager;
+
+    private boolean isMyAppLauncherDefault(Context appContext) {
+        final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+        final String myPackageName = appContext.getPackageName();
+
+        filter.addCategory(Intent.CATEGORY_HOME);
+        List<IntentFilter> filters = new ArrayList<IntentFilter>();
+        filters.add(filter);
+
+        List<ComponentName> activities = new ArrayList<ComponentName>();
+        if (packageManager == null)
+            packageManager = appContext.getPackageManager();
+
+        packageManager.getPreferredActivities(filters, activities, null);
+        for (ComponentName activity : activities) {
+            if (myPackageName.equals(activity.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         mContext = this;
+        boolean is_default_launcher = isMyAppLauncherDefault(this);
 
 	//Incrementing the number of launches
-	int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);
-	int is_setup = SharedPreferencesManager.getInt(this, SharedPreferencesManager.IS_SETUP_TAG);
+	    int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);
+	    int is_setup = SharedPreferencesManager.getInt(this, SharedPreferencesManager.IS_SETUP_TAG);
 	if (launches >= 0 && is_setup > 0)
 	    launches++;
 	SharedPreferencesManager.putInt(this, SharedPreferencesManager.LAUNCHES_TAG, launches);
 	//
-	
-        //Hiding Notification Bar Hacks
-        preventStatusBarExpansion(mContext);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //
+
+        if (is_default_launcher) {
+            //Hiding Notification Bar Hacks
+            preventStatusBarExpansion(mContext);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            //
+        }
         if (appView == null)
-            customInit();
+            customInit(is_default_launcher);
         this.keepRunning = preferences.getBoolean("KeepRunning", true);
         appView.loadUrlIntoView(launchUrl, true);
         setContentView(appView.getView());
@@ -82,7 +112,7 @@ public class MainActivity extends CordovaActivity
     }
 
 
-    public void customInit(){
+    public void customInit(boolean is_default_launcher){
         appView = makeWebView();
         initAppView();
         if (!appView.isInitialized()) {
@@ -90,17 +120,15 @@ public class MainActivity extends CordovaActivity
         }
         cordovaInterface.onCordovaInit(appView.getPluginManager());
         // Wire the hardware volume controls to control media if desired.
-        String volumePref = preferences.getString("DefaultVolumeStream", "");
-        if ("media".equals(volumePref.toLowerCase(Locale.ENGLISH))) {
-            setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        if (is_default_launcher) {
+            appView.getView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
-        appView.getView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 
     public void initAppView() {
@@ -166,7 +194,6 @@ public class MainActivity extends CordovaActivity
 
         @Override
         public boolean onInterceptTouchEvent(MotionEvent ev) {
-            Log.v("customViewGroup", "**********Intercepted");
             return false;
         }
     }

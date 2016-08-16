@@ -12,6 +12,7 @@ import org.apache.cordova.CallbackContext;
 public class SharedPreferencesManager {
     final static String LAUNCHES_TAG = "LAUNCHES";
     final static String IS_SETUP_TAG = "IS_SETUP";
+    final static String IS_DEFAULT_LAUNCHER_TAG = "IS_DEFAULT_LAUNCHER";
 
     public static void putInt(Context context, String tag, int value){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
