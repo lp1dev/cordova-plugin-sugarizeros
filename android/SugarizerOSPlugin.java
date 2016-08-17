@@ -152,8 +152,10 @@ public class SugarizerOSPlugin extends CordovaPlugin {
 			pm.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
 		}
-		if (isDefault)
+		if (isDefault){
 			pm.clearPackagePreferredActivities(appContext.getPackageName());
+			pm.clearPackagePreferredActivities(getDefaultLauncherPackageName(appContext, pm));
+		}
 		openChooseLauncherPopup(appContext);
 		if (reset && isDefault == isMyAppLauncherDefault(appContext, pm)){
 			openAppSettings(appContext);
