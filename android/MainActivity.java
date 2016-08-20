@@ -61,8 +61,8 @@ public class MainActivity extends CordovaActivity
         boolean is_default_launcher = SugarizerOSPlugin.isMyAppLauncherDefault(this, null);
 
 	//Incrementing the number of launches
-	    int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);
-	    int is_setup = SharedPreferencesManager.getInt(this, SharedPreferencesManager.IS_SETUP_TAG);
+	int launches = SharedPreferencesManager.getInt(this, SharedPreferencesManager.LAUNCHES_TAG);
+	int is_setup = SharedPreferencesManager.getInt(this, SharedPreferencesManager.IS_SETUP_TAG);
 	if (launches >= 0 && is_setup > 0)
 	    launches++;
 	SharedPreferencesManager.putInt(this, SharedPreferencesManager.LAUNCHES_TAG, launches);
@@ -99,6 +99,11 @@ public class MainActivity extends CordovaActivity
         }
         cordovaInterface.onCordovaInit(appView.getPluginManager());
         // Wire the hardware volume controls to control media if desired.
+	String volumePref = preferences.getString("DefaultVolumeStream", "");
+	if ("media".equals(volumePref.toLowerCase(Locale.ENGLISH))) {
+	    setVolumeControlStream(AudioManager.STREAM_MUSIC);
+	}
+	//
         if (is_default_launcher) {
             appView.getView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE

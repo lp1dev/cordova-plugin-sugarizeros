@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
@@ -20,6 +22,18 @@ public  class SugarWifiManager{
     static final String WEP = "[WEP";
     static final String WPA2 = "[WPA2";
     static final String WPA = "[WPA";
+
+    public static int isWifiEnabled(Context context){
+        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+        if (wifi.isWifiEnabled()){
+            return 1;
+        }
+        return 0;
+    }
+
+    public static void isWifiEnabled(CallbackContext callbackContext, Context appContext){
+        callbackContext.success(isWifiEnabled(appContext));
+    }
 
     public static void joinNetwork(String SSID, String pass, String capabilities, Context context) {
         WifiConfiguration conf = new WifiConfiguration();

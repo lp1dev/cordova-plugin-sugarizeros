@@ -6,6 +6,9 @@ sugarizerOS.applicationsLoaded = false;
 sugarizerOS.isDefaultLauncher = false;
 sugarizerOS.networks = [];
 sugarizerOS.networkIconsCache = [];
+sugarizerOS.launches = -1;
+sugarizerOS.launcherPackageName = null;
+sugarizerOS.packageName = "org.olpcfrance.sugarizer";
 
 sugarizerOS.addApplicationToJournal = function (callback, application, datastore) {
     var mimetype = "text/plain";
@@ -26,6 +29,14 @@ sugarizerOS.addNetworkIconToCache = function(icon){
     if (!sugarizerOS.getNetworkIconFromCache(icon.BSSID)){
 	sugarizerOS.networkIconsCache.push(icon);
     }
+}
+
+sugarizerOS.isWifiEnabled = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "isWifiEnabled", []);
+}
+
+sugarizerOS.getLauncherPackageName = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "getLauncherPackageName", []);
 }
 
 sugarizerOS.getNetworkIconFromCache = function(BSSID){
@@ -61,6 +72,7 @@ sugarizerOS.init = function(){
 	window.sugarizerOS = sugarizerOS;
 	sugarizerOS.checkIfDefaultLauncher();
 	console.log("SugarizerOS initialized");
+	sugarizerOS.getLauncherPackageName(function(value) {sugarizerOS.launcherPackageName = value;});
     }
     else{
 	console.log("No window to initialize sugarizerOS");
@@ -89,6 +101,11 @@ sugarizerOS.chooseLauncher = function(){
 
 sugarizerOS.checkIfDefaultLauncher = function(){
     exec(sugarizerOS.setIsDefaultLauncher, null, "SugarizerOSPlugin", "isDefaultLauncher", []);
+    sugarizerOS.getInt(function(value){sugarizerOS.launches = value;}, null, "LAUNCHES");
+}
+
+sugarizerOS.getIsDefaultLauncher = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "isDefaultLauncher", []);
 }
 
 sugarizerOS.setIsDefaultLauncher = function(value){
@@ -103,7 +120,6 @@ sugarizerOS.echo = function(onSuccess, onFailure, string){
 }
 
 sugarizerOS.getAndroidApplications = function(onSuccess, onFailure, flags){
-    console.log("getAndroidApplications", "passed");
     exec(onSuccess, onFailure, "SugarizerOSPlugin", "apps", flags);
 }
 
@@ -140,27 +156,57 @@ sugarizerOS.applicationsToActivities = function(applications){
     return activities;
 }
 
-sugarizerOS.initActivitiesPreferences = function(){
+sugarizerOS.getAppIndex = function(item, list){
+    for (var i = 0; i < list.length; i++){
+	if (list[i].id == item.id)
+	    return i;
+    }
+    return -1;
+}
+
+sugarizerOS.initActivitiesPreferences = function(callback){
     sugarizerOS.getAndroidApplications(function(applications){
-	applications = sugarizerOS.applicationsToActivities(applications);	
+	applications = sugarizerOS.applicationsToActivities(applications);
 	var activities = preferences.getActivities();
 
-	console.log("applications", applications);
-	console.log("activities", activities);
-	for (var j = 0; j < activities.length; j++){
-	    if (activities[j].type && activities[j].type == "native")
-		if (applications.indexOf(activities[j]) == -1)
-		    activities.splice(j, 1);
-	}
 	for (var i = 0; i < applications.length; i++){
-	    var index = activities.indexOf(applications[i]);
+	    var index = sugarizerOS.getAppIndex(applications[i], activities);
 	    if (index == -1)
 		activities.push(applications[i])
 	}
-	console.log("activitiesPostPush", activities);
-	preferences.setActivities(activities);
+	var apps = [];
+	for (var i = 0; i < activities.length; i++){
+	    if (activities[i].type && activities[i].type == "native")
+	    {
+		if (sugarizerOS.getAppIndex(activities[i], applications) == -1)
+		    continue;
+		apps.push(activities[i]);
+	    }
+	    else
+		apps.push(activities[i]);
+	}
+	var nonNative = [];
+	var nativeApps = [];
+
+	for (var i = 0; i < apps.length; i++)
+	{
+	    if (apps[i].type && apps[i].type == "native")
+		nativeApps.push(apps[i]);
+	    else
+		nonNative.push(apps[i]);
+	}
+
+	nativeApps.sort(function(a, b){
+	    return a.name.localeCompare(b.name);
+	});
+	nonNative.sort(function(a,b){
+	    return a.name.localeCompare(b.name);
+	});
+	preferences.setActivities(nonNative.concat(nativeApps));
+	if (callback)
+	    callback();
     }
-				       , sugarizerOS.log, [0]);
+				       , null, [0]);
 }
     
 sugarizerOS.log = function(m){
