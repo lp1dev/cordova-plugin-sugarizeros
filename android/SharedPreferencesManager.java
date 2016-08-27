@@ -6,12 +6,10 @@ import android.preference.PreferenceManager;
 
 import org.apache.cordova.CallbackContext;
 
-/**
- * Created by lupin on 10/08/16.
- */
 public class SharedPreferencesManager {
     final static String LAUNCHES_TAG = "LAUNCHES";
     final static String IS_SETUP_TAG = "IS_SETUP";
+    final static String KEYSTORE_TAG = "KEYSTORE";
 
     public static void putInt(Context context, String tag, int value){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -25,9 +23,13 @@ public class SharedPreferencesManager {
         editor.putString(tag, value);
         editor.apply();
     }
+
+    public static void getString(CallbackContext callbackContext, Context context, String tag){
+        callbackContext.success(getString(context, tag));
+    }
+
     public static void getInt(CallbackContext callbackContext, Context context, String tag){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        callbackContext.success(prefs.getInt(tag, -1));
+        callbackContext.success(getInt(context, tag));
     }
     public static int getInt(Context context, String tag){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

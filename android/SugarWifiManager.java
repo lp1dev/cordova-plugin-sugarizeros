@@ -8,7 +8,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.PluginResult;
@@ -23,6 +25,50 @@ public  class SugarWifiManager{
     static final String WPA2 = "[WPA2";
     static final String WPA = "[WPA";
 
+    private static String getWifiSSID(Context appContext){
+        WifiManager wifiManager = (WifiManager) appContext.getSystemService(appContext.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        return wifiInfo.getSSID();
+    }
+
+    public static void resetKeyStore(Context context){
+        SharedPreferencesManager.putString(context, SharedPreferencesManager.KEYSTORE_TAG, "{}");
+    }
+
+    public static JSONObject getKeyStore(Context context){
+        String keyStore = SharedPreferencesManager.getString(context, SharedPreferencesManager.KEYSTORE_TAG);
+        try {
+            return new JSONObject(keyStore);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void getKeyStore(CallbackContext callbackContext, Context context){
+        JSONObject keyStore = getKeyStore(context);
+        if (keyStore != null)
+            callbackContext.success(keyStore);
+        else
+            callbackContext.error("Invalid JSON KeyStore");
+    }
+
+    public static void setKey(CallbackContext callbackContext, Context context, String SSID, String key){
+        try {
+            JSONObject keyStore = getKeyStore(context);
+            if (keyStore == null) {
+                callbackContext.error("Invalid JSON KeyStore");
+                return;
+            }
+            keyStore.put(SSID, key);
+            SharedPreferencesManager.putString(context, SharedPreferencesManager.KEYSTORE_TAG, keyStore.toString());
+            callbackContext.success();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callbackContext.error(e.toString());
+        }
+    }
+
     public static int isWifiEnabled(Context context){
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         if (wifi.isWifiEnabled()){
@@ -33,6 +79,11 @@ public  class SugarWifiManager{
 
     public static void isWifiEnabled(CallbackContext callbackContext, Context appContext){
         callbackContext.success(isWifiEnabled(appContext));
+    }
+
+    public static void disconnect(Context appContext){
+        WifiManager wifi = (WifiManager) appContext.getSystemService(Context.WIFI_SERVICE);
+        wifi.disconnect();
     }
 
     public static void joinNetwork(String SSID, String pass, String capabilities, Context context) {
@@ -72,6 +123,7 @@ public  class SugarWifiManager{
         WifiManager mWifiManager;
         IntentFilter i = new IntentFilter();
         i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        final String wifiSSID = getWifiSSID(appContext).replace("\"", "");
         appContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -88,6 +140,7 @@ public  class SugarWifiManager{
                         object.put("BSSID", scanResult.BSSID);
                         object.put("capabilities", scanResult.capabilities);
                         object.put("RSSI", scanResult.level);
+                        object.put("isConnected", wifiSSID.equals(scanResult.SSID));
                         output.put(object);
                     }
                     PluginResult result = new PluginResult(PluginResult.Status.OK, output);

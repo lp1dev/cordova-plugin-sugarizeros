@@ -9,6 +9,8 @@ sugarizerOS.networkIconsCache = [];
 sugarizerOS.launches = -1;
 sugarizerOS.launcherPackageName = null;
 sugarizerOS.packageName = "org.olpcfrance.sugarizer";
+sugarizerOS.appsCache = null;
+sugarizerOS.isSetup = false;
 
 sugarizerOS.addApplicationToJournal = function (callback, application, datastore) {
     var mimetype = "text/plain";
@@ -29,6 +31,14 @@ sugarizerOS.addNetworkIconToCache = function(icon){
     if (!sugarizerOS.getNetworkIconFromCache(icon.BSSID)){
 	sugarizerOS.networkIconsCache.push(icon);
     }
+}
+
+sugarizerOS.disconnectWifi = function(){
+    exec(null,null, "SugarizerOSPlugin", "disconnect", []);
+}
+
+sugarizerOS.getWifiSSID = function(onSuccess){
+    exec(onSuccess, null, "SugarizerOSPlugin", "getWifiSSID", []);
 }
 
 sugarizerOS.isWifiEnabled = function(onSuccess, onFailure){
@@ -73,10 +83,24 @@ sugarizerOS.init = function(){
 	sugarizerOS.checkIfDefaultLauncher();
 	console.log("SugarizerOS initialized");
 	sugarizerOS.getLauncherPackageName(function(value) {sugarizerOS.launcherPackageName = value;});
+	sugarizerOS.getKeyStore(function(value){sugarizerOS.keyStore = value;}, function(error){sugarizerOS.resetKeyStore();sugarizerOS.init();});
+	sugarizerOS.getInt(function(value){sugarizerOS.isSetup == (value == 1);}, null, "IS_SETUP"); 
     }
     else{
 	console.log("No window to initialize sugarizerOS");
     }
+}
+
+sugarizerOS.resetKeyStore = function(){
+    exec(null, null, "SugarizerOSPlugin", "resetKeyStore", []);
+}
+
+sugarizerOS.getKeyStore = function(onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "getKeyStore", []);
+}
+
+sugarizerOS.setKey = function(SSID, key, onSuccess, onFailure){
+    exec(onSuccess, onFailure, "SugarizerOSPlugin", "setKey", [SSID, key]);
 }
 
 sugarizerOS.selectLauncher = function(){
@@ -166,6 +190,8 @@ sugarizerOS.getAppIndex = function(item, list){
 
 sugarizerOS.initActivitiesPreferences = function(callback){
     sugarizerOS.getAndroidApplications(function(applications){
+	if (applications != sugarizerOS.appsCache){
+	    sugarizerOS.appsCache = applications;
 	applications = sugarizerOS.applicationsToActivities(applications);
 	var activities = preferences.getActivities();
 
@@ -205,8 +231,10 @@ sugarizerOS.initActivitiesPreferences = function(callback){
 	preferences.setActivities(nonNative.concat(nativeApps));
 	if (callback)
 	    callback();
+	}
     }
-				       , null, [0]);
+	, null, [0]);
+				      
 }
     
 sugarizerOS.log = function(m){
